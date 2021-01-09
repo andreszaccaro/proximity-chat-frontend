@@ -26,15 +26,17 @@ const ChatRoom = ({ userId }) => {
 
   useEffect(() => {
     roomId &&
-      subscribeToMore &&
       subscribeToMore({
         document: RoomSubscription,
         variables: { roomId },
         updateQuery: (prev, { subscriptionData }) => {
           if (!subscriptionData.data) return prev;
           const roomUsers = subscriptionData.data.roomUsers;
+          const prevUsers = prev.room.filter(
+            (user) => user.id !== roomUsers.id
+          );
           return Object.assign({}, prev, {
-            room: { ...prev.room, roomUsers },
+            room: [...prevUsers, roomUsers],
           });
         },
       });
@@ -59,7 +61,7 @@ const ChatRoom = ({ userId }) => {
         </button>
       </form>
       {data &&
-        data.room.users.map((user, key) => (
+        data.room.map((user, key) => (
           <p key={key}>{`${user.name}: ${user.lastMessage}`}</p>
         ))}
       <style jsx>{``}</style>
@@ -72,12 +74,8 @@ const RoomQuery = gql`
     room(roomId: $roomId) {
       __typename
       id
-      users {
-        __typename
-        id
-        name
-        lastMessage
-      }
+      name
+      lastMessage
     }
   }
 `;
