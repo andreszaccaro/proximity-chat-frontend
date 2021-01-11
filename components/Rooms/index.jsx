@@ -27,7 +27,7 @@ const Rooms = () => {
         data.rooms.map((room, key) => (
           <React.Fragment key={key}>
             <Link href={`/rooms/${room.id}`}>
-              <a>{room.id}</a>
+              <a>{`Room ${key}: ${room.id}`}</a>
             </Link>
             <br />
           </React.Fragment>
