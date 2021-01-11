@@ -4,12 +4,12 @@ import NameSelectorView from "../../components/Rooms/NameSelector";
 import ChatRoomView from "../../components/Rooms/ChatRoom";
 
 const ChatRoom = () => {
-  const [userId, setUserId] = useState(false);
-
-  return userId ? (
-    <ChatRoomView userId={userId} />
+  const [user, setUser] = useState(false);
+  console.log("user", user);
+  return user ? (
+    <ChatRoomView user={user} />
   ) : (
-    <NameSelectorView setUserId={setUserId} />
+    <NameSelectorView setUser={setUser} />
   );
 };
 

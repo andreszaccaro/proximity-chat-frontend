@@ -4,7 +4,7 @@ import { gql, useMutation } from "@apollo/client";
 
 import { withApollo } from "../../apollo/client";
 
-const NameSelector = ({ setUserId }) => {
+const NameSelector = ({ setUser }) => {
   const router = useRouter();
   const roomId = router.query.id;
 
@@ -18,7 +18,7 @@ const NameSelector = ({ setUserId }) => {
         name,
       },
     });
-    setUserId(data.createUser.id);
+    setUser(data.createUser);
   };
 
   return (
@@ -49,6 +49,10 @@ const CreateUserMutation = gql`
     createUser(roomId: $roomId, name: $name) {
       __typename
       id
+      name
+      positionX
+      positionY
+      lastMessage
     }
   }
 `;

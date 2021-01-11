@@ -5,28 +5,45 @@ import { gql, useQuery, useMutation } from "@apollo/client";
 import { withApollo } from "../../apollo/client";
 import Bubble from "../shared/Bubble";
 
-const ChatRoom = ({ userId }) => {
+const ChatRoom = ({ user: { id: userId, positionX, positionY } }) => {
   const router = useRouter();
   const roomId = router.query.id;
 
   const [message, setMessage] = useState("");
-  const [positionX, setPositionX] = useState("");
-  const [positionY, setPositionY] = useState("");
+  const [mainUserCoord, setMainUserCoord] = useState({ positionX, positionY });
   const { subscribeToMore, data } = useQuery(RoomQuery, {
     variables: { roomId },
   });
   const [updateUserMutation, { loading }] = useMutation(UpdateUserMutation);
 
   const updateUser = async ({ message, positionX, positionY }) => {
-    (message || positionX || positionY) &&
-      (await updateUserMutation({
-        variables: {
-          userId,
-          message,
-          positionX,
-          positionY,
-        },
-      }));
+    if (message || positionX || positionY) {
+      try {
+        await updateUserMutation({
+          variables: {
+            userId,
+            message,
+            positionX,
+            positionY,
+          },
+        });
+        (positionX || positionY) &&
+          setMainUserCoord({
+            positionX: positionX || mainUserCoord.positionX,
+            positionY: positionY || mainUserCoord.positionY,
+          });
+      } catch (error) {
+        console.log("error", error);
+      }
+    }
+  };
+
+  const updateCoordinates = (event) => {
+    var target = event.target;
+    var domRect = target.getBoundingClientRect();
+    var x = event.clientX - domRect.left;
+    var y = event.clientY - domRect.top;
+    updateUser({ positionX: x, positionY: y });
   };
 
   useEffect(() => {
@@ -47,15 +64,6 @@ const ChatRoom = ({ userId }) => {
       });
   }, [roomId]);
 
-  const updateCoordinates = (event) => {
-    console.log("event", event);
-    var target = event.target;
-    var domRect = target.getBoundingClientRect();
-    var x = event.clientX - domRect.left;
-    var y = event.clientY - domRect.top;
-    updateUser({ positionX: x, positionY: y });
-  };
-
   return (
     <div className="chat-room">
       <p>{`This page will contain the chatbox for the room ID ${roomId}`}</p>
@@ -63,15 +71,17 @@ const ChatRoom = ({ userId }) => {
         <svg
           className="chatbox"
           width={600}
-          height={300}
+          height={400}
           onClick={(e) => updateCoordinates(e)}
         >
           {data &&
             data.room.map((user, key) => (
               <Bubble
                 key={key}
-                x={user.positionX}
-                y={user.positionY}
+                mainUserX={mainUserCoord.positionX}
+                mainUserY={mainUserCoord.positionY}
+                currentUserX={user.positionX}
+                currentUserY={user.positionY}
                 data={user}
               />
             ))}
@@ -96,6 +106,7 @@ const ChatRoom = ({ userId }) => {
       <style jsx>{`
         .chatbox {
           border: solid black;
+          cursor: pointer;
         }
       `}</style>
     </div>
