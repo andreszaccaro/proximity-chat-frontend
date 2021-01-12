@@ -5,6 +5,7 @@ import ChatRoomView from "../../components/Rooms/ChatRoom";
 
 const ChatRoom = () => {
   const [user, setUser] = useState(false);
+
   return user ? (
     <ChatRoomView user={user} />
   ) : (

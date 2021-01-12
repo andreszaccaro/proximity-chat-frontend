@@ -1,13 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useRouter } from "next/router";
 import { gql, useQuery, useMutation } from "@apollo/client";
 
 import { withApollo } from "../../apollo/client";
 import Bubble from "../shared/Bubble";
 
-const ChatRoom = ({ user: { id: userId, positionX, positionY } }) => {
+const ChatRoom = ({ user: { id: userId, positionX, positionY, room } }) => {
   const router = useRouter();
   const roomId = router.query.id;
+  const roomName = useMemo(() => room.name.replace("_", " "), [room]);
 
   const [message, setMessage] = useState("");
   const [mainUserCoord, setMainUserCoord] = useState({ positionX, positionY });
@@ -27,6 +28,7 @@ const ChatRoom = ({ user: { id: userId, positionX, positionY } }) => {
             positionY,
           },
         });
+        message && setMessage("");
         (positionX || positionY) &&
           setMainUserCoord({
             positionX: positionX || mainUserCoord.positionX,
@@ -65,11 +67,13 @@ const ChatRoom = ({ user: { id: userId, positionX, positionY } }) => {
   }, [roomId]);
 
   return (
-    <div className="chat-room">
-      <p>{`This page will contain the chatbox for the room ID ${roomId}`}</p>
+    <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div>
+        <h2 className="mb-4 text-3xl leading-8 text-center font-extrabold capitalize tracking-tight text-blue-700 sm:text-4xl">
+          {roomName}
+        </h2>
         <svg
-          className="chatbox"
+          className="background-pattern cursor-pointer rounded-lg shadow-md ring-1 ring-black ring-opacity-5 overflow-hidden"
           width={600}
           height={400}
           onClick={(e) => updateCoordinates(e)}
@@ -87,26 +91,34 @@ const ChatRoom = ({ user: { id: userId, positionX, positionY } }) => {
             ))}
         </svg>
         <form
+          className="flex flex-row p-2 mt-2 rounded-lg shadow-md ring-1 ring-black ring-opacity-5"
           onSubmit={(e) => {
             e.preventDefault();
             updateUser({ message });
           }}
         >
           <input
+            id="message"
+            name="message"
             type="text"
+            required
+            className="appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
+            placeholder="Type here..."
             value={message}
             onChange={(e) => setMessage(e.target.value)}
-            placeholder="message"
           />
-          <button type="submit" value="submit">
-            {loading ? "Loading..." : "Send Message"}
+          <button
+            type="submit"
+            className="flex-1 w-full flex justify-center py-2 px-8 ml-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+          >
+            Send
           </button>
         </form>
       </div>
       <style jsx>{`
-        .chatbox {
-          border: solid black;
-          cursor: pointer;
+        .background-pattern {
+          background-color: #f3f4f6;
+          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4' viewBox='0 0 4 4'%3E%3Cpath fill='%233b82f6' fill-opacity='0.22' d='M1 3h1v1H1V3zm2-2h1v1H3V1z'%3E%3C/path%3E%3C/svg%3E");
         }
       `}</style>
     </div>

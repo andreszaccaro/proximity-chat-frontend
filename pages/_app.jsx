@@ -2,6 +2,8 @@ import React from "react";
 import Head from "next/head";
 import Layout from "../components/Layout";
 
+import "tailwindcss/tailwind.css";
+
 const MyApp = ({ Component, pageProps }) => (
   <React.Fragment>
     <Head>

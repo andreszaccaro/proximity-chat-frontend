@@ -11,21 +11,12 @@ const Bubble = ({ mainUserX, mainUserY, currentUserX, currentUserY, data }) => {
   return (
     <g>
       <g>
-        <circle
-          className="icon"
-          cx={currentUserX + 20}
-          cy={currentUserY + 20}
-          r={20}
-        />
-        <text className="name" x={currentUserX + 5} y={currentUserY + 55}>
-          {data ? data.name : ""}
-        </text>
         {distanceToMainUser <= MAX_DISTANCE && (
           <text
             className={
               distanceToMainUser <= MAX_DISTANCE * SHADING_PERCENTAGE
-                ? "full-color"
-                : "color-shading"
+                ? "text-base font-bold"
+                : "text-base opacity-80"
             }
             x={currentUserX + 45}
             y={currentUserY + 25}
@@ -33,23 +24,21 @@ const Bubble = ({ mainUserX, mainUserY, currentUserX, currentUserY, data }) => {
             {data ? data.lastMessage : ""}
           </text>
         )}
+        <circle
+          className="text-blue-700 fill-current"
+          cx={currentUserX + 20}
+          cy={currentUserY + 20}
+          r={20}
+        />
+        <text
+          className="text-blue-700 fill-current text-base font-bold"
+          textAnchor="middle"
+          x={currentUserX + 20}
+          y={currentUserY + 55}
+        >
+          {data ? data.name : ""}
+        </text>
       </g>
-      <style jsx>{`
-        .icon {
-          fill: blue;
-        }
-        .name {
-          font-weight: bold;
-          font-size: 1rem;
-        }
-        .full-color {
-          font-weight: bold;
-          font-size: 1rem;
-        }
-        .color-shading {
-          font-weight: 500;
-        }
-      `}</style>
     </g>
   );
 };
