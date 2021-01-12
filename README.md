@@ -6,7 +6,7 @@
 * [Setup](#setup)
 
 ## General info
-This project is the code for a website to join chat rooms and only talk with people close to you. It uses Apollo Graphql subscriptions to set up connections between users.
+This project is the code for a website where users can join chat rooms and only talk with people close to them. It uses Apollo Graphql subscriptions to set up connections between users.
 	
 ## Technologies
 Project is created with:
