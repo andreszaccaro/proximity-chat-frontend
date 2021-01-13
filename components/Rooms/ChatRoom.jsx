@@ -45,7 +45,7 @@ const ChatRoom = ({ user: { id: userId, positionX, positionY, room } }) => {
     var domRect = target.getBoundingClientRect();
     var x = event.clientX - domRect.left;
     var y = event.clientY - domRect.top;
-    updateUser({ positionX: x, positionY: y });
+    updateUser({ positionX: Math.round(x), positionY: Math.round(y) });
   };
 
   useEffect(() => {
